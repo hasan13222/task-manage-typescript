@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import Task from "./Task";
 import { Fragment, useContext } from "react";
 import { AuthContext } from "../../../Providers/AuthProvider";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { Combine, DragDropContext, Draggable, DraggableLocation, Droppable } from "react-beautiful-dnd";
 import axios from "axios";
 
 export interface TaskItemType {
@@ -26,21 +26,24 @@ const TaskManager = () => {
   } = useQuery({
     queryKey: ["tasks", userEmail],
     queryFn: () =>
-      fetch(`https://task-management-server-roan.vercel.app/tasks?email=${userEmail}`).then((res) =>
-        res.json()
-      ),
+      fetch(
+        `https://task-management-server-roan.vercel.app/tasks?email=${userEmail}`
+      ).then((res) => res.json()),
   });
 
   interface dragArg {
-    source: {
-      droppableId: string;
-    };
-    destination: {
-      droppableId: string;
-    };
+    combine: Combine | null | undefined;
+    destination: DraggableLocation | undefined |null;
     draggableId: string;
+    mode: string;
+    reason: string;
+    source: { index: number; droppableId: string };
+    type: string;
+    //
   }
   const dragHandler = (result: dragArg) => {
+    console.log(result);
+
     const { source, draggableId, destination } = result;
     if (!destination) {
       return;
@@ -52,7 +55,10 @@ const TaskManager = () => {
     if (source.droppableId !== destination.droppableId) {
       const newStatus = { status: destination.droppableId };
       axios
-        .patch(`https://task-management-server-roan.vercel.app/tasks/${draggableId}`, newStatus)
+        .patch(
+          `https://task-management-server-roan.vercel.app/tasks/${draggableId}`,
+          newStatus
+        )
         .then((data) => {
           if (data.data) {
             refetch();
@@ -71,7 +77,7 @@ const TaskManager = () => {
           {(isLoading || isFetching) && (
             <span className="loading loading-ring loading-lg"></span>
           )}
-          <DragDropContext onDragEnd={dragHandler}>
+          <DragDropContext onDragEnd={(result) => dragHandler(result)}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <Droppable droppableId="todo">
                 {(provided) => (
@@ -90,13 +96,11 @@ const TaskManager = () => {
                             <Draggable index={index} draggableId={item._id}>
                               {(provided) => (
                                 <div
-                                {...provided.dragHandleProps}
-                                {...provided.draggableProps}
-                                ref={provided.innerRef}
+                                  {...provided.dragHandleProps}
+                                  {...provided.draggableProps}
+                                  ref={provided.innerRef}
                                 >
-                                  <Task
-                                    task={item}
-                                  />
+                                  <Task task={item} />
                                 </div>
                               )}
                             </Draggable>
@@ -125,13 +129,11 @@ const TaskManager = () => {
                             <Draggable index={index} draggableId={item._id}>
                               {(provided) => (
                                 <div
-                                {...provided.dragHandleProps}
-                                {...provided.draggableProps}
-                                ref={provided.innerRef}
+                                  {...provided.dragHandleProps}
+                                  {...provided.draggableProps}
+                                  ref={provided.innerRef}
                                 >
-                                  <Task
-                                    task={item}
-                                  />
+                                  <Task task={item} />
                                 </div>
                               )}
                             </Draggable>
@@ -160,13 +162,11 @@ const TaskManager = () => {
                             <Draggable index={index} draggableId={item._id}>
                               {(provided) => (
                                 <div
-                                {...provided.dragHandleProps}
-                                {...provided.draggableProps}
-                                ref={provided.innerRef}
+                                  {...provided.dragHandleProps}
+                                  {...provided.draggableProps}
+                                  ref={provided.innerRef}
                                 >
-                                  <Task
-                                    task={item}
-                                  />
+                                  <Task task={item} />
                                 </div>
                               )}
                             </Draggable>

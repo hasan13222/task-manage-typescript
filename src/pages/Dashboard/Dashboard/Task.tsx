@@ -105,7 +105,11 @@ const Task: FC<TaskProps> = ({ task }) => {
               </button>
             )}
             <button
-              onClick={() => document.getElementById("my_modal_5").showModal()}
+              onClick={() => {
+                if(document){
+                  (document.getElementById("my_modal_5") as HTMLFormElement).showModal()
+                }
+              }}
               className="btn btn-warning"
             >
               Edit

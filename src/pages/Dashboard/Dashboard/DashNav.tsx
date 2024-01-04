@@ -18,6 +18,14 @@ const DashNav = () => {
     formState: { errors },
   } = useForm()
 
+  const handleShowModal = () => {
+    const modalId = document.getElementById("my_modal_3") as HTMLFormElement;
+    if (modalId){
+      modalId.showModal()
+    }
+    
+  }
+
   const onSubmit = (data: object) => {
     const newTask = {...data, status: "todo", email: user?.email};
     
@@ -40,14 +48,12 @@ const DashNav = () => {
               <button className="btn bg-transparent mr-2 border-none shadow-none hover:bg-transparent">
                 <img
                   className="max-w-24 object-contain w-full h-full"
-                  src={user?.photoURL}
+                  src={`${user?.photoURL}`}
                   alt="logo"
                 />
               </button>
               <button
-                onClick={() =>
-                  document.getElementById("my_modal_3").showModal()
-                }
+                onClick={handleShowModal}
                 className="btn btn-primary"
               >
                 Create New Task
